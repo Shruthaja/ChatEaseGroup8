@@ -1,9 +1,10 @@
 package com.example.chattutorial
-
+import android.R.style.Theme
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.chattutorial.databinding.ActivityMainBinding
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -16,11 +17,14 @@ import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.channels.bindView
 
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+//        toggleDarkMode()
         super.onCreate(savedInstanceState)
 
         // Step 0 - inflate binding
@@ -42,16 +46,19 @@ class MainActivity : AppCompatActivity() {
             .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
             .build()
-
+        Toast.makeText(this, client.toString(), Toast.LENGTH_SHORT).show()
         // Step 3 - Authenticate and connect the user
         val user = User(
             id = "student121",
-            name = "Shruthaja",
-            image = "https://bit.ly/2TIt8NR"
+            name = "student121",
+            image = ""
         )
+//        client.searchMessages()
+        val t=client.devToken(userId = "student121")
+//        print(user)
         client.connectUser(
             user = user,
-            token = "f23d644tb83xkx2sdkf7ke2p2dhnec9m9nh85puq43r7r985y7gxkzckt9m8yumn"
+            token = t
         ).enqueue {
             if (it.isSuccess) {
                 // Step 4 - Set the channel list filter and order
@@ -76,4 +83,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun toggleDarkMode() {
+        val currentNightMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+
+        // If the current mode is night mode, switch to light mode; otherwise, switch to dark mode
+        if (currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        }
+
+        // Recreate the activity to apply the new mode
+        recreate()
+    }
+
 }
