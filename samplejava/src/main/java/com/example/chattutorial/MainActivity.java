@@ -3,6 +3,7 @@ package com.example.chattutorial;
 import static java.util.Collections.singletonList;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -41,44 +42,49 @@ public final class MainActivity extends AppCompatActivity {
         );
 
         // Step 2 - Set up the client for API calls with the plugin for offline storage
-        ChatClient client = new ChatClient.Builder("uun7ywwamhs9", getApplicationContext())
+        ChatClient client = new ChatClient.Builder("hz7v96dxqebs", getApplicationContext())
                 .withPlugins(streamOfflinePluginFactory, streamStatePluginFactory)
                 .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
                 .build();
 
         // Step 3 - Authenticate and connect the user
+        // Step 3 - Authenticate and connect the user
         User user = new User.Builder()
-                .withId("tutorial-droid")
-                .withName("Tutorial Droid")
+                .withId("ach123")
+                .withName("student121")
                 .withImage("https://bit.ly/2TIt8NR")
                 .build();
 
         client.connectUser(
                 user,
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.WwfBzU1GZr0brt_fXnqKdKhz3oj0rbDUm2DqJO_SS5U"
+                "zwx2hmke7knubvfhpx98fzt9qp3x7ttjhu5uvgj4gyevkfgf95uygcexybyp2rf6"
         ).enqueue(result -> {
-            // Step 4 - Set the channel list filter and order
-            // This can be read as requiring only channels whose "type" is "messaging" AND
-            // whose "members" include our "user.id"
-            FilterObject filter = Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.in("members", singletonList(user.getId()))
-            );
+            if (result.isSuccess()) {
+                // User is successfully connected, proceed with creating ChannelListViewModelFactory
 
-            ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
-                    .filter(filter)
-                    .sort(ChannelListViewModel.DEFAULT_SORT)
-                    .build();
+                // Step 4 - Set the channel list filter and order
+                FilterObject filter = Filters.and(
+                        Filters.eq("type", "messaging"),
+                        Filters.in("members", singletonList(user.getId()))
+                );
 
-            ChannelListViewModel channelsViewModel =
-                    new ViewModelProvider(this, factory).get(ChannelListViewModel.class);
+                ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
+                        .filter(filter)
+                        .sort(ChannelListViewModel.DEFAULT_SORT)
+                        .build();
 
-            // Step 5 - Connect the ChannelListViewModel to the ChannelListView, loose
-            //          coupling makes it easy to customize
-            ChannelListViewModelBinding.bind(channelsViewModel, binding.channelListView, this);
-            binding.channelListView.setChannelItemClickListener(
-                    channel -> startActivity(ChannelActivity4.newIntent(this, channel))
-            );
+                ChannelListViewModel channelsViewModel =
+                        new ViewModelProvider(this, factory).get(ChannelListViewModel.class);
+
+                // Step 5 - Connect the ChannelListViewModel to the ChannelListView
+                ChannelListViewModelBinding.bind(channelsViewModel, binding.channelListView, this);
+                binding.channelListView.setChannelItemClickListener(
+                        channel -> startActivity(ChannelActivity4.newIntent(this, channel))
+                );
+            } else {
+                // Handle the case where connecting the user failed
+                Toast.makeText(this, "Failed to connect user!", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }

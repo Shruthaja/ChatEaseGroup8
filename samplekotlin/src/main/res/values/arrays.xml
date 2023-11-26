@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="countries">
+        <item>91,IN</item>
+        <item>263,ZW</item>
+    </array>
+</resources>
