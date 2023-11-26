@@ -26,7 +26,7 @@ class ImgurAttachmentFactory : AttachmentFactory {
         listeners: MessageListListenerContainer?,
         parent: ViewGroup
     ): InnerAttachmentViewHolder {
-        val imgurAttachment = message.attachments.first() { it.isImgurAttachment() }
+        val imgurAttachment = message.attachments.first { it.isImgurAttachment() }
         val binding = AttachmentImgurBinding
             .inflate(LayoutInflater.from(parent.context), null, false)
         return ImgurAttachmentViewHolder(

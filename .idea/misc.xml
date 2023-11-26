@@ -7,4 +7,11 @@
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.12385321100917432" />
+      </ProjectState>
+    </option>
+  </component>
 </project>

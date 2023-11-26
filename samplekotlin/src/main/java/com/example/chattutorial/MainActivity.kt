@@ -1,4 +1,5 @@
 package com.example.chattutorial
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -60,9 +61,7 @@ class MainActivity : AppCompatActivity() {
             token = t
         ).enqueue {
             if (it.isSuccess) {
-                // Step 4 - Set the channel list filter and order
-                // This can be read as requiring only channels whose "type" is "messaging" AND
-                // whose "members" include our "user.id"
+
                 val filter = Filters.and(
                     Filters.eq("type", "messaging"),
                     Filters.`in`("members", listOf(user.id))
@@ -71,8 +70,7 @@ class MainActivity : AppCompatActivity() {
                     ChannelListViewModelFactory(filter, ChannelListViewModel.DEFAULT_SORT)
                 val viewModel: ChannelListViewModel by viewModels { viewModelFactory }
 
-                // Step 5 - Connect the ChannelListViewModel to the ChannelListView, loose
-                //          coupling makes it easy to customize
+
                 viewModel.bindView(binding.channelListView, this)
                 binding.channelListView.setChannelItemClickListener { channel ->
                     startActivity(ChannelActivity.newIntent(this, channel))
@@ -84,24 +82,9 @@ class MainActivity : AppCompatActivity() {
 
             val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
             fab.setOnClickListener { view ->
-                val channelClient =
-                    client.channel(channelType = "messaging", channelId = "general2")
+                val intent = Intent(this, channelmanage::class.java)
+                startActivity(intent)
 
-                // Watch the channel
-                channelClient.watch().enqueue { result ->
-                    if (result.isSuccess) {
-                        // Channel successfully watched, now add members
-                        channelClient.addMembers(listOf("ach123","shru")).enqueue { addMembersResult ->
-                            if (addMembersResult.isSuccess) {
-                                // Members added successfully
-                            } else {
-                                // Handle addMembersResult.error()
-                            }
-                        }
-                    } else {
-                        // Handle result.error()
-                    }
-                }
             }
         }
 

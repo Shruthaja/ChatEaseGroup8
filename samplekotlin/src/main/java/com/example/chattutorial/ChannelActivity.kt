@@ -31,8 +31,6 @@ class ChannelActivity : AppCompatActivity() {
             "Specifying a channel id is required when starting ChannelActivity"
         }
 
-        // Step 1 - Create three separate ViewModels for the views so it's easy
-        //          to customize them individually
         val factory = MessageListViewModelFactory(this, cid)
         val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
         val messageListViewModel: MessageListViewModel by viewModels { factory }
