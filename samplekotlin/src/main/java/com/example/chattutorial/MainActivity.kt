@@ -1,11 +1,10 @@
 package com.example.chattutorial
-import android.R.style.Theme
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import com.example.chattutorial.databinding.ActivityMainBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.Filters
@@ -76,26 +75,48 @@ class MainActivity : AppCompatActivity() {
                 //          coupling makes it easy to customize
                 viewModel.bindView(binding.channelListView, this)
                 binding.channelListView.setChannelItemClickListener { channel ->
-                    startActivity(ChannelActivity4.newIntent(this, channel))
+                    startActivity(ChannelActivity.newIntent(this, channel))
                 }
             } else {
                 Toast.makeText(this, "something went wrong!", Toast.LENGTH_SHORT).show()
             }
+
+
+            val fab = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+            fab.setOnClickListener { view ->
+                val channelClient =
+                    client.channel(channelType = "messaging", channelId = "general2")
+
+                // Watch the channel
+                channelClient.watch().enqueue { result ->
+                    if (result.isSuccess) {
+                        // Channel successfully watched, now add members
+                        channelClient.addMembers(listOf("ach123","shru")).enqueue { addMembersResult ->
+                            if (addMembersResult.isSuccess) {
+                                // Members added successfully
+                            } else {
+                                // Handle addMembersResult.error()
+                            }
+                        }
+                    } else {
+                        // Handle result.error()
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
     }
 
-    private fun toggleDarkMode() {
-        val currentNightMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
-
-        // If the current mode is night mode, switch to light mode; otherwise, switch to dark mode
-        if (currentNightMode == android.content.res.Configuration.UI_MODE_NIGHT_YES) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        }
-
-        // Recreate the activity to apply the new mode
-        recreate()
-    }
-
-}
