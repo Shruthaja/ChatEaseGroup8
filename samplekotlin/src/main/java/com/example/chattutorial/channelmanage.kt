@@ -1,12 +1,15 @@
 package com.example.chattutorial
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.Toast
@@ -25,6 +28,9 @@ import java.util.UUID
 
 class channelmanage : AppCompatActivity() {
 
+    private fun showNameInputDialog() {
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.channelmanage)
@@ -100,59 +106,85 @@ class channelmanage : AppCompatActivity() {
 
                              //Handle button click to perform actions on selected items
                             actionButton.setOnClickListener {
-                                // Perform actions using the selected items
-                                if (selectedItems.isNotEmpty()) {
-                                    // Example: Display a Toast with selected items
-                                    val selectedItemsText = selectedItems.joinToString(", ")
-                                    //actions here based on selected items
-                                    Toast.makeText(this, "Selected Items: $selectedItemsText", Toast.LENGTH_SHORT).show()
-                                    if(selectedItems.size==1){
-                                        selectedItems.add("student121")
-                                        val channelClient = client.channel(channelType = "messaging", channelId = selectedItems[0])
-                                        channelClient.create(memberIds = selectedItems,extraData = mapOf("name" to channelClient.channelId)).enqueue { result ->
-                                            if (result.isSuccess) {
-                                                val channel: Channel = result.getOrThrow()
-                                                Log.d("channelid",channel.toString())
-                                                startActivity(ChannelActivity3.newIntent(this,channel))
-                                            } else {
-                                                // Handle result.error()
+                                val builder = AlertDialog.Builder(this)
+                                builder.setTitle("Enter Group Name")
+
+                                val input = EditText(this)
+                                builder.setView(input)
+
+                                builder.setPositiveButton("OK") { dialog: DialogInterface, _: Int ->
+                                    val name = input.text.toString()
+                                    if (name.isNotEmpty()) {
+                                        // Perform actions with the entered name
+                                        // For example, you can use it in the channel creation logic
+//                Toast.makeText(this, "Entered Name: $name", Toast.LENGTH_SHORT).show()
+
+                                        if (selectedItems.isNotEmpty()) {
+                                            // Example: Display a Toast with selected items
+                                            val selectedItemsText = selectedItems.joinToString(", ")
+                                            //actions here based on selected items
+                                            Toast.makeText(this, "Selected Items: $selectedItemsText", Toast.LENGTH_SHORT).show()
+                                            if(selectedItems.size==1){
+                                                selectedItems.add("student121")
+                                                val channelClient = client.channel(channelType = "messaging", channelId = selectedItems[0])
+                                                channelClient.create(memberIds = selectedItems,extraData = mapOf("name" to name)).enqueue { result ->
+                                                    if (result.isSuccess) {
+                                                        val channel: Channel = result.getOrThrow()
+                                                        Log.d("channelid",channel.toString())
+                                                        startActivity(ChannelActivity3.newIntent(this,channel))
+                                                    } else {
+                                                        // Handle result.error()
+                                                    }
+                                                }
                                             }
-                                        }
-                                    }
 
-                                   else {
-                                        val channelClient = client.channel(
-                                            channelType = "messaging",
-                                            channelId = UUID.randomUUID().toString()
-                                        )
-
-                                        channelClient.create(
-                                            memberIds = selectedItems,
-                                            extraData = mapOf(
-                                                "name" to UUID.randomUUID()
-                                                    .toString() + "assumeusergave"
-                                            )
-                                        ).enqueue { result ->
-                                            if (result.isSuccess) {
-                                                val channel: Channel = result.getOrThrow()
-                                                Log.d("channelid", channel.toString())
-                                                startActivity(
-                                                    ChannelActivity4.newIntent(
-                                                        this,
-                                                        channel
-                                                    )
+                                            else {
+                                                val channelClient = client.channel(
+                                                    channelType = "messaging",
+                                                    channelId = UUID.randomUUID().toString()
                                                 )
-                                            } else {
-                                                // Handle result.error()
+
+                                                channelClient.create(
+                                                    memberIds = selectedItems,
+                                                    extraData = mapOf(
+                                                        "name" to name
+                                                    )
+                                                ).enqueue { result ->
+                                                    if (result.isSuccess) {
+                                                        val channel: Channel = result.getOrThrow()
+                                                        Log.d("channelid", channel.toString())
+                                                        startActivity(
+                                                            ChannelActivity4.newIntent(
+                                                                this,
+                                                                channel
+                                                            )
+                                                        )
+                                                    } else {
+                                                        // Handle result.error()
+                                                    }
+                                                }
                                             }
+
+
+                                            //end of group creation or songle chat logic
+                                        } else {
+                                            Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
                                         }
+
+
+                                    } else {
+                                        Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
                                     }
-
-
-                                   //end of group creation or songle chat logic
-                                } else {
-                                    Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
+                                    dialog.dismiss()
                                 }
+
+                                builder.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
+                                    dialog.dismiss()
+                                }
+
+                                builder.show()
+//                                showNameInputDialog()
+                                // Perform actions using the selected items
                             }
 
                             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
