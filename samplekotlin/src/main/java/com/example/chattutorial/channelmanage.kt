@@ -106,42 +106,44 @@ class channelmanage : AppCompatActivity() {
 
                              //Handle button click to perform actions on selected items
                             actionButton.setOnClickListener {
-                                val builder = AlertDialog.Builder(this)
-                                builder.setTitle("Enter Group Name")
-
-                                val input = EditText(this)
-                                builder.setView(input)
-
-                                builder.setPositiveButton("OK") { dialog: DialogInterface, _: Int ->
-                                    val name = input.text.toString()
-                                    if (name.isNotEmpty()) {
-                                        // Perform actions with the entered name
-                                        // For example, you can use it in the channel creation logic
-//                Toast.makeText(this, "Entered Name: $name", Toast.LENGTH_SHORT).show()
-
-                                        if (selectedItems.isNotEmpty()) {
-                                            // Example: Display a Toast with selected items
-                                            val selectedItemsText = selectedItems.joinToString(", ")
-                                            //actions here based on selected items
-                                            Toast.makeText(this, "Selected Items: $selectedItemsText", Toast.LENGTH_SHORT).show()
-                                            if(selectedItems.size==1){
-                                                selectedItems.add("student121")
-                                                val channelClient = client.channel(channelType = "messaging", channelId = selectedItems[0])
-                                                channelClient.create(memberIds = selectedItems,extraData = mapOf("name" to name)).enqueue { result ->
-                                                    if (result.isSuccess) {
-                                                        val channel: Channel = result.getOrThrow()
-                                                        Log.d("channelid",channel.toString())
-                                                        startActivity(ChannelActivity3.newIntent(this,channel))
-                                                    } else {
-                                                        // Handle result.error()
-                                                    }
-                                                }
+//                                showNameInputDialog()
+                                // Perform actions using the selected items
+                                if (selectedItems.isNotEmpty()) {
+                                    // Example: Display a Toast with selected items
+                                    val selectedItemsText = selectedItems.joinToString(", ")
+                                    //actions here based on selected items
+                                    Toast.makeText(this, "Selected Items: $selectedItemsText", Toast.LENGTH_SHORT).show()
+                                    if(selectedItems.size==1){
+                                        selectedItems.add("student121")
+                                        val channelClient = client.channel(channelType = "messaging", channelId = selectedItems[0])
+                                        channelClient.create(memberIds = selectedItems,extraData = mapOf("name" to channelClient.channelId)).enqueue { result ->
+                                            if (result.isSuccess) {
+                                                val channel: Channel = result.getOrThrow()
+                                                Log.d("channelid",channel.toString())
+                                                startActivity(ChannelActivity3.newIntent(this,channel))
+                                            } else {
+                                                // Handle result.error()
                                             }
+                                        }
+                                    }
 
-                                            else {
+                                   else {
+
+                                        val builder = AlertDialog.Builder(this)
+                                        builder.setTitle("Enter Name")
+
+                                        val input = EditText(this)
+                                        builder.setView(input)
+
+                                        builder.setPositiveButton("OK") { dialog: DialogInterface, _: Int ->
+                                            val name = input.text.toString()
+                                            if (name.isNotEmpty()) {
+                                                // Perform actions with the entered name
+                                                // For example, you can use it in the channel creation logic
+//                Toast.makeText(this, "Entered Name: $name", Toast.LENGTH_SHORT).show()
                                                 val channelClient = client.channel(
                                                     channelType = "messaging",
-                                                    channelId = UUID.randomUUID().toString()
+                                                    channelId = name
                                                 )
 
                                                 channelClient.create(
@@ -163,28 +165,26 @@ class channelmanage : AppCompatActivity() {
                                                         // Handle result.error()
                                                     }
                                                 }
+
+                                            } else {
+                                                Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
                                             }
-
-
-                                            //end of group creation or songle chat logic
-                                        } else {
-                                            Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
+                                            dialog.dismiss()
                                         }
 
+                                        builder.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
+                                            dialog.dismiss()
+                                        }
 
-                                    } else {
-                                        Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
+                                        builder.show()
+
                                     }
-                                    dialog.dismiss()
-                                }
 
-                                builder.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
-                                    dialog.dismiss()
+//===================================================================================================
+                                   //end of group creation or songle chat logic
+                                } else {
+                                    Toast.makeText(this, "No items selected", Toast.LENGTH_SHORT).show()
                                 }
-
-                                builder.show()
-//                                showNameInputDialog()
-                                // Perform actions using the selected items
                             }
 
                             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
