@@ -1,36 +1,38 @@
 # Android Chat Tutorial Sample
 
-This repository allows you to check the result after completing each step described in the [Android Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin). It contains samples written in both **Kotlin** (_samplekotlin_ module) and **Java** (_samplejava_ module). For more Android Chat examples, see the [Github repo for the SDK](https://github.com/GetStream/stream-chat-android) and the [UI Components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample) in it.
+This repository contains Android Chat Tutorial samples in both Kotlin (samplekotlin module) and Java (samplejava module). For more examples, visit the Stream Chat SDK GitHub repository and the UI Components sample app.
 
-> Already all-in on Jetpack Compose? Check out the [tutorial repo of our Compose UI Components](https://github.com/GetStream/compose-chat-tutorial) instead.
+# For Jetpack Compose Users:
+If you're using Jetpack Compose, refer to the Compose UI Components tutorial repository.
 
-The project is pre-configured with a shared [Stream](https://getstream.io) account for testing purposes. You can learn more about Stream Chat [here](https://getstream.io/chat/), and then sign up for an account and obtain your own keys [here](https://getstream.io/chat/trial).
+# Prerequisites
+This project is pre-configured with a shared Stream account for testing purposes. For more information about Stream Chat and to sign up for your own account, visit Stream Chat.
 
-## Quick start
+# Quick Start -
+1. Clone this repository:
+2. git clone https://github.com/your-repo/android-chat-sample.git
+3. Open the project in Android Studio.
+4. Run either the samplekotlin or samplejava configuration in your emulator or physical device.
+5. See the Details section below for further customizations.
 
-1. Clone the repository
-2. Open the project in Android Studio
-3. Run the _samplekotlin_ or _samplejava_ configuration
-4. Make sure to check the [Details](#details) section below for customizations
+# The sample apps have two main screens:
 
-## Details
+1. MainActivity: Displays the list of available chat channels.
+2. ChannelActivity: Displays the selected channel, including the header, message list, and input view.
+Each module includes multiple ChannelActivity implementations based on tutorial steps. You can switch between them by updating the setOnChannelClickListener in MainActivity:
 
-The sample apps consist of two screens:
+# kotlin
 
-* `MainActivity`: Shows the list of available channels.
-* `ChannelActivity`: Shows the selected channel view, which includes the header, message list, and message input view.
-
-Each module contains multiple `ChannelActivity` implementations, which correspond to the steps of the tutorial. You can easily swap them by changing the `setOnChannelClickListener` located in `MainActivity`:
-
-```kotlin
 channelListView.setOnChannelClickListener { channel ->
-    // open the channel activity
+    // Open the channel activity
     startActivity(ChannelActivity.newIntent(this, channel))
 }
-```
 
-Currently, you can choose from four different `ChannelActivity` implementations:
+# You can choose from the following ChannelActivity implementations:
 
-* `ChannelActivity` - a basic _Message List_ implementation
-* `ChannelActivity2` - includes a new _MessageListView_ style and custom attachment type
-* `ChannelActivity4` - includes a custom _Typing Header_ component created with the [Low-Level Client](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-client) library
+1. ChannelActivity: Basic message list implementation.
+2. ChannelActivity2: Includes a new MessageListView style and custom attachment types.
+3. ChannelActivity4: Features a custom typing header component created with the low-level client library.
+
+# Customization
+You can modify or enhance the chat experience by following the steps provided in the tutorial. Make sure to explore the different implementations in the project for learning and customization opportunities.
